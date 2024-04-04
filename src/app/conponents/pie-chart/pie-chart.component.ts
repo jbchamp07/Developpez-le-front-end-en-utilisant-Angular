@@ -59,15 +59,11 @@ export class PieChartComponent implements OnInit {
       });
       this.updateChart();
     });
-    
-  
   }
 
    updateChart() {
      const dataPoints = this.countryInfos.map(country => ({ y: country.totalMedals, name: country.country }));
      this.chartOptions.data[0].dataPoints = dataPoints;
-     // Forcer la détection des modifications
-     
    }
 
 }
