@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, count, map } from 'rxjs';
 import { OlympicCountry } from 'src/app/core/models/Olympic';
 import { Input } from '@angular/core';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { Participation } from 'src/app/core/models/Participation';
+import { OlympicsInfos } from 'src/app/core/models/OlympicInfos';
 
 @Component({
   selector: 'app-pie-chart',
@@ -11,44 +13,63 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 })
 export class PieChartComponent implements OnInit {
 
-  @Input() OlympicCountries!: Observable<OlympicCountry[]>;
+  @Input() olympicCountries!: Observable<OlympicCountry[]>;
   totalParticipation: number = 0;
+  oCountries: OlympicCountry[] = [];
+  countryInfos: OlympicsInfos[] = [];
 
   constructor() { }
 
   ngOnInit(): void {
     // Souscrire à l'Observable OlympicCountries pour obtenir les valeurs         Calculer la participation totale
-    this.OlympicCountries.subscribe((countries: OlympicCountry[]) => {
-      countries.forEach((country: OlympicCountry) => {
-        this.totalParticipation += country.participations.medalsCount;
-        alert(country.participations.medalsCount);
-      });
-    });
-    alert(this.totalParticipation);
-    calculatePercent();
+
+    this.calculatePercent();
+
+
   }
 
+
   chartOptions = {
-	  animationEnabled: true,
-	  title: {
-		text: "Medals per Country"
-	  },
-	  data: [{
-		type: "pie",
-		startAngle: -90,
-		indexLabel: "{name}: {y}",
-		yValueFormatString: "#,###.##'%'",
-		dataPoints: [
-		  { y: 14.1, name: "Toys" },
-		  { y: 28.2, name: "Electronics" },
-		  { y: 14.4, name: "Groceries" },
-		  { y: 43.3, name: "Furniture" }
-		]
-	  }]
-	}
+    animationEnabled: true,
+    title: {
+      text: "Medals per Country"
+    },
+    data: [{
+      type: "pie",
+      startAngle: -90,
+      indexLabel: "{name}: {y}",
+      //yValueFormatString: "#,###.##'%'",
+      dataPoints: [] as { y: number; name: string; }[]
+    }]
+  }
+
+  calculatePercent() {
+    //Mappage add attributes to interface
+    this.olympicCountries.subscribe((countries: OlympicCountry[]) => {
+      countries.forEach((country: OlympicCountry) => {
+        this.countryInfos.push(new OlympicsInfos(country.id, country.country, country.participations));
+      });
+
+      //Calculate the number of participations of each country
+      this.countryInfos.forEach((country: OlympicsInfos) => {
+        country.participations.forEach((participation: Participation) => {
+          country.totalMedals += participation.medalsCount;
+        });
+        
+      });
+      this.updateChart();
+    });
+    
+  
+  }
+
+   updateChart() {
+     const dataPoints = this.countryInfos.map(country => ({ y: country.totalMedals, name: country.country }));
+     this.chartOptions.data[0].dataPoints = dataPoints;
+     // Forcer la détection des modifications
+     
+   }
 
 }
-function calculatePercent() {
-  throw new Error('Function not implemented.');
-}
+
 
