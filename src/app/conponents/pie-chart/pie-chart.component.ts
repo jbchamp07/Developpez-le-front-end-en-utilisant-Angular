@@ -5,6 +5,7 @@ import { Input } from '@angular/core';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { Participation } from 'src/app/core/models/Participation';
 import { OlympicsInfos } from 'src/app/core/models/OlympicInfos';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pie-chart',
@@ -18,7 +19,7 @@ export class PieChartComponent implements OnInit {
   oCountries: OlympicCountry[] = [];
   countryInfos: OlympicsInfos[] = [];
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     // Souscrire à l'Observable OlympicCountries pour obtenir les valeurs         Calculer la participation totale
@@ -40,7 +41,8 @@ export class PieChartComponent implements OnInit {
       indexLabel: "{name}: {y}",
       //yValueFormatString: "#,###.##'%'",
       dataPoints: [] as { y: number; name: string; }[]
-    }]
+    }],
+    click: (event: any) => this.chartClicked(event)
   }
 
   calculatePercent() {
@@ -66,6 +68,20 @@ export class PieChartComponent implements OnInit {
      this.chartOptions.data[0].dataPoints = dataPoints;
    }
 
+   chartClicked(event: any) {
+
+    if (event.dataPoint) {
+      const countryName = event.dataPoint.name;
+      const country = this.countryInfos.find(c => c.country === countryName);
+      
+        //Config route with object
+        this.router.navigate(['country/', country]);
+      }
+    }
+    methodeTEST(){
+      const country = this.countryInfos.find(c => c.country === "Italy");
+      this.router.navigate(['country', country?.id]);
+    }
 }
 
 

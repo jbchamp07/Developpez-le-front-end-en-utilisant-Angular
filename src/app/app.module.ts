@@ -7,9 +7,10 @@ import { HomeComponent } from './pages/home/home.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { PieChartComponent } from './conponents/pie-chart/pie-chart.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { DetailsComponent } from './conponents/details/details.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, NotFoundComponent, PieChartComponent],
+  declarations: [AppComponent, HomeComponent, NotFoundComponent, PieChartComponent, DetailsComponent],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule,CanvasJSAngularChartsModule],
   providers: [],
   bootstrap: [AppComponent],

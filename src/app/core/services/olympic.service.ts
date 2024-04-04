@@ -28,4 +28,9 @@ export class OlympicService {
   getOlympics() {
     return this.olympics$.asObservable();
   }
+
+  getCountryById(id: number){
+    const olympics = this.olympics$.getValue();
+    return olympics.find(country => country.id === id);
+  }
 }
