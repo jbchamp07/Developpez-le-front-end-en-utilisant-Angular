@@ -10,7 +10,6 @@ import { OlympicCountry } from '../models/Olympic';
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
   private olympics$ = new BehaviorSubject<OlympicCountry[]>([]);
-
   constructor(private http: HttpClient) {}
 
   loadInitialData() {
