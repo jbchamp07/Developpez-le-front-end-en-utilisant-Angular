@@ -28,7 +28,7 @@ export class PieChartComponent implements OnInit {
     // Souscrire à l'Observable OlympicCountries pour obtenir les valeurs         Calculer la participation totale
 
     this.calculatePercent();
-    
+
   }
 
 
@@ -41,10 +41,13 @@ export class PieChartComponent implements OnInit {
       type: "pie",
       startAngle: -90,
       indexLabel: "{name}: {y}",
-
+      click: (e: { dataPoint: { name: string; }; }) =>{
+        if (e && e.dataPoint) {
+          this.chartClicked(e.dataPoint.name);
+        }
+      },
       dataPoints: [] as { y: number; name: string; }[]
     }],
-    click: (event: any) => this.chartClicked(event)
   }
 
   calculatePercent() {
@@ -64,43 +67,31 @@ export class PieChartComponent implements OnInit {
       this.updateChart();
     });
   }
-  
-   updateChart() {
-     const dataPoints = this.countryInfos.map(country => ({ y: country.totalMedals, name: country.country }));
-     this.chartOptions.data[0].dataPoints = dataPoints;
-     this.fillLabels();
-   }
 
-   chartClicked(event: any) {
+  updateChart() {
+    const dataPoints = this.countryInfos.map(country => ({ y: country.totalMedals, name: country.country }));
+    this.chartOptions.data[0].dataPoints = dataPoints;
+    this.fillLabels();
+  }
 
-    if (event.dataPoint) {
-      const countryName = event.dataPoint.name;
-      const country = this.countryInfos.find(c => c.country === countryName);
-      
-        //Config route with countryId
-        this.router.navigate(['country/', country?.id]);
-      }
-    }
-    methodeTEST(){
-      const country = this.countryInfos.find(c => c.country === "Italy");
-      this.router.navigate(['country', country?.id]);
-    }
+  chartClicked(countryName: string) {
+    const country = this.countryInfos.find(c => c.country === countryName);
+    //Config route with countryId
+    this.router.navigate(['country/', country?.id]);
+  }
 
-    fillLabels() {
-      let years: number[] = [];
-      console.log(this.countryInfos);
-      this.countryInfos.forEach(country => {
-        country.participations.forEach(participation => {
-          if(!years.find(y => y == participation.year)){
-            years.push(participation.year);
-          }
-        });
+  fillLabels() {
+    let years: number[] = [];
+    this.countryInfos.forEach(country => {
+      country.participations.forEach(participation => {
+        if (!years.find(y => y == participation.year)) {
+          years.push(participation.year);
+        }
       });
-      this.nbOfJOs = years.length;
-      this.nbOfCountries = this.countryInfos.length;
-      console.log(this.nbOfJOs);
-      console.log(this.nbOfCountries);
-    }
+    });
+    this.nbOfJOs = years.length;
+    this.nbOfCountries = this.countryInfos.length;
+  }
 
 }
 
