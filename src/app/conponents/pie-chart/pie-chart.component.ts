@@ -18,6 +18,7 @@ export class PieChartComponent implements OnInit {
   totalParticipation: number = 0;
   oCountries: OlympicCountry[] = [];
   countryInfos: OlympicsInfos[] = [];
+  canDisplay: boolean = false;
 
   constructor(private router: Router) { }
 
@@ -39,7 +40,7 @@ export class PieChartComponent implements OnInit {
       type: "pie",
       startAngle: -90,
       indexLabel: "{name}: {y}",
-      //yValueFormatString: "#,###.##'%'",
+
       dataPoints: [] as { y: number; name: string; }[]
     }],
     click: (event: any) => this.chartClicked(event)
@@ -74,8 +75,8 @@ export class PieChartComponent implements OnInit {
       const countryName = event.dataPoint.name;
       const country = this.countryInfos.find(c => c.country === countryName);
       
-        //Config route with object
-        this.router.navigate(['country/', country]);
+        //Config route with countryId
+        this.router.navigate(['country/', country?.id]);
       }
     }
     methodeTEST(){

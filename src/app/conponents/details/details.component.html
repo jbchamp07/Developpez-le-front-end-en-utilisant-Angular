@@ -1,1 +1,4 @@
-<p>details works!</p>
+<div *ngIf="canDisplay">
+    <canvasjs-chart [options]="chartOptions" [styles]="{width: '100%', height:'360px'}"></canvasjs-chart>    
+</div> 
+<button (click)="back()">Back</button>
