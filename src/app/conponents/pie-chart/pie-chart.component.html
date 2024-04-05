@@ -1,4 +1,17 @@
 <div *ngIf="canDisplay">
+    <div class="container">
+        <h2>Medals per Country</h2>
+    </div>
+    <div class="container">
+        <div class="box">
+          <p>Number of JOs</p>
+          <strong>{{ nbOfJOs }}</strong>
+        </div>
+        <div class="box">
+            <p>Number of countries</p>
+            <strong>{{ nbOfCountries }}</strong>
+        </div>
+      </div>
     <canvasjs-chart [options]="chartOptions" [styles]="{width: '100%', height:'360px'}"></canvasjs-chart>
 </div>
 <button (click)="methodeTEST()">bouton de test italy</button>

@@ -16,9 +16,11 @@ export class PieChartComponent implements OnInit {
 
   @Input() olympicCountries!: Observable<OlympicCountry[]>;
   totalParticipation: number = 0;
-  oCountries: OlympicCountry[] = [];
+  //oCountries: OlympicCountry[] = [];
   countryInfos: OlympicsInfos[] = [];
   canDisplay: boolean = false;
+  nbOfJOs: number = 0;
+  nbOfCountries: number = 0;
 
   constructor(private router: Router) { }
 
@@ -26,15 +28,14 @@ export class PieChartComponent implements OnInit {
     // Souscrire à l'Observable OlympicCountries pour obtenir les valeurs         Calculer la participation totale
 
     this.calculatePercent();
-
-
+    
   }
 
 
   chartOptions = {
     animationEnabled: true,
     title: {
-      text: "Medals per Country"
+      //text: "Medals per Country"
     },
     data: [{
       type: "pie",
@@ -58,15 +59,16 @@ export class PieChartComponent implements OnInit {
         country.participations.forEach((participation: Participation) => {
           country.totalMedals += participation.medalsCount;
         });
-        
+        this.canDisplay = true;
       });
       this.updateChart();
     });
   }
-
+  
    updateChart() {
      const dataPoints = this.countryInfos.map(country => ({ y: country.totalMedals, name: country.country }));
      this.chartOptions.data[0].dataPoints = dataPoints;
+     this.fillLabels();
    }
 
    chartClicked(event: any) {
@@ -83,6 +85,23 @@ export class PieChartComponent implements OnInit {
       const country = this.countryInfos.find(c => c.country === "Italy");
       this.router.navigate(['country', country?.id]);
     }
+
+    fillLabels() {
+      let years: number[] = [];
+      console.log(this.countryInfos);
+      this.countryInfos.forEach(country => {
+        country.participations.forEach(participation => {
+          if(!years.find(y => y == participation.year)){
+            years.push(participation.year);
+          }
+        });
+      });
+      this.nbOfJOs = years.length;
+      this.nbOfCountries = this.countryInfos.length;
+      console.log(this.nbOfJOs);
+      console.log(this.nbOfCountries);
+    }
+
 }
 
 
