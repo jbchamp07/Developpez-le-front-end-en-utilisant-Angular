@@ -13,10 +13,12 @@ export class DetailsComponent implements OnInit {
   country !: OlympicCountry;
   medalsPerYear: { x: number, y: number }[] = [];
   canDisplay: boolean = false;
-
+  totalMedals: number = 0;
+  totalAthletes: number = 0;
   constructor(private route: ActivatedRoute, private olympicService: OlympicService, private router: Router) { }
 
   ngOnInit(): void {
+
     //Get the id
     const countryId = this.route.snapshot.params['countryId'];
     this.getCountryInfos(countryId);
@@ -35,6 +37,7 @@ export class DetailsComponent implements OnInit {
         }
       });
     });
+    
   }
 
 
@@ -42,7 +45,7 @@ export class DetailsComponent implements OnInit {
     animationEnabled: true,
     theme: "light2",
     title: {
-      text: "Title not loaded"
+      text: ""
     },
     axisX: {
       valueFormatString: "YYYY",
@@ -94,8 +97,16 @@ export class DetailsComponent implements OnInit {
 			yValueFormatString: "# Medals",
 			dataPoints: this.medalsPerYear.map(item => ({ x: new Date(item.x, 0, 1), y: item.y }))
 		}]
-    this.chartOptions.title = { text: this.country.country };
+    //this.chartOptions.title = { text: this.country.country };
     this.canDisplay = true;
+    this.fillLabels();
+  }
+
+  fillLabels() {
+    this.country.participations.forEach(participation => {
+      this.totalAthletes += participation.athleteCount;
+      this.totalMedals += participation.medalsCount;
+    });
   }
 
   back() {

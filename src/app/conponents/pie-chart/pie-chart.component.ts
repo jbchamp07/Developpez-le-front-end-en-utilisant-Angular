@@ -92,7 +92,6 @@ export class PieChartComponent implements OnInit {
     this.nbOfJOs = years.length;
     this.nbOfCountries = this.countryInfos.length;
   }
-
 }
 
 
