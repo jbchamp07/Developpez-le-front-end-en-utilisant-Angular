@@ -6,6 +6,7 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { Participation } from 'src/app/core/models/Participation';
 import { OlympicsInfos } from 'src/app/core/models/OlympicInfos';
 import { Router } from '@angular/router';
+import { OlympicService } from 'src/app/core/services/olympic.service';
 
 @Component({
   selector: 'app-pie-chart',
@@ -14,19 +15,18 @@ import { Router } from '@angular/router';
 })
 export class PieChartComponent implements OnInit {
 
-  @Input() olympicCountries!: Observable<OlympicCountry[]>;
+  olympicCountries$!: Observable<OlympicCountry[]>;
   totalParticipation: number = 0;
-  //oCountries: OlympicCountry[] = [];
   countryInfos: OlympicsInfos[] = [];
   canDisplay: boolean = false;
   nbOfJOs: number = 0;
   nbOfCountries: number = 0;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router,private olympicService: OlympicService) { }
 
   ngOnInit(): void {
     // Souscrire à l'Observable OlympicCountries pour obtenir les valeurs         Calculer la participation totale
-
+    this.olympicCountries$ = this.olympicService.getOlympics();
     this.calculatePercent();
 
   }
@@ -52,7 +52,7 @@ export class PieChartComponent implements OnInit {
 
   calculatePercent() {
     //Mappage add attributes to interface
-    this.olympicCountries.subscribe((countries: OlympicCountry[]) => {
+    this.olympicCountries$.subscribe((countries: OlympicCountry[]) => {
       countries.forEach((country: OlympicCountry) => {
         this.countryInfos.push(new OlympicsInfos(country.id, country.country, country.participations));
       });
