@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable, count, map } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subject, count, map, takeUntil } from 'rxjs';
 import { OlympicCountry } from 'src/app/core/models/Olympic';
 import { Input } from '@angular/core';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
@@ -13,7 +13,7 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
   templateUrl: './pie-chart.component.html',
   styleUrls: ['./pie-chart.component.scss']
 })
-export class PieChartComponent implements OnInit {
+export class PieChartComponent implements OnInit,OnDestroy {
 
   olympicCountries$!: Observable<OlympicCountry[]>;
   totalParticipation: number = 0;
@@ -21,11 +21,13 @@ export class PieChartComponent implements OnInit {
   canDisplay: boolean = false;
   nbOfJOs: number = 0;
   nbOfCountries: number = 0;
+  private destroy$!: Subject<boolean>;
 
   constructor(private router: Router,private olympicService: OlympicService) { }
 
   ngOnInit(): void {
     // Souscrire à l'Observable OlympicCountries pour obtenir les valeurs         Calculer la participation totale
+    this.destroy$ = new Subject<boolean>();
     this.olympicCountries$ = this.olympicService.getOlympics();
     this.calculatePercent();
 
@@ -52,7 +54,7 @@ export class PieChartComponent implements OnInit {
 
   calculatePercent() {
     //Mappage add attributes to interface
-    this.olympicCountries$.subscribe((countries: OlympicCountry[]) => {
+    this.olympicCountries$.pipe(takeUntil(this.destroy$)).subscribe((countries: OlympicCountry[]) => {
       countries.forEach((country: OlympicCountry) => {
         this.countryInfos.push(new OlympicsInfos(country.id, country.country, country.participations));
       });
@@ -91,6 +93,9 @@ export class PieChartComponent implements OnInit {
     });
     this.nbOfJOs = years.length;
     this.nbOfCountries = this.countryInfos.length;
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
   }
 }
 
