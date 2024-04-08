@@ -25,7 +25,7 @@ export class DetailsComponent implements OnInit {
   }
 
   //Get country informations
-  getCountryInfos(countryId: any) {
+  getCountryInfos(countryId: string) {
 
     this.olympicService.loadInitialData().subscribe(() => {
       this.olympicService.getCountryById(parseInt(countryId, 10)).subscribe(country => {
@@ -97,7 +97,6 @@ export class DetailsComponent implements OnInit {
 			yValueFormatString: "# Medals",
 			dataPoints: this.medalsPerYear.map(item => ({ x: new Date(item.x, 0, 1), y: item.y }))
 		}]
-    //this.chartOptions.title = { text: this.country.country };
     this.canDisplay = true;
     this.fillLabels();
   }
