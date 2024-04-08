@@ -33,7 +33,7 @@ export class PieChartComponent implements OnInit,OnDestroy {
 
   }
 
-
+  // worked
   chartOptions = {
     animationEnabled: true,
     title: {
