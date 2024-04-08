@@ -25,7 +25,6 @@ export class PieChartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     
-    
     this.olympicService.loadInitialData().pipe(takeUntil(this.destroy$)).subscribe(() => {
       //Get countries data
       this.olympicCountries$ = this.olympicService.getOlympics();

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { OlympicCountry } from 'src/app/core/models/Olympic';
 import { Participation } from 'src/app/core/models/Participation';
 import { OlympicService } from 'src/app/core/services/olympic.service';
@@ -9,12 +10,13 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent implements OnInit {
+export class DetailsComponent implements OnInit, OnDestroy {
   country !: OlympicCountry;
   medalsPerYear: { x: number, y: number }[] = [];
   canDisplay: boolean = false;
   totalMedals: number = 0;
   totalAthletes: number = 0;
+  private destroy$ = new Subject<boolean>();
   constructor(private route: ActivatedRoute, private olympicService: OlympicService, private router: Router) { }
 
   ngOnInit(): void {
@@ -27,15 +29,12 @@ export class DetailsComponent implements OnInit {
   //Get country informations
   getCountryInfos(countryId: string) {
 
-    this.olympicService.loadInitialData().subscribe(() => {
-      this.olympicService.getCountryById(parseInt(countryId, 10)).subscribe(country => {
-        if (country) {
-          this.country = country;
-          this.prepareMedalData(country.participations);
-        } else {
-          alert("Pays non trouvé");
-        }
-      });
+    this.olympicService.loadInitialData().pipe(takeUntil(this.destroy$)).subscribe(countries => {
+      this.country = countries.find(c =>c.id === parseInt(countryId,0)) as OlympicCountry;
+      this.prepareMedalData(this.country.participations);
+      this.updateChartOptions();
+      this.fillLabels();
+      this.canDisplay = true;
     });
     
   }
@@ -85,8 +84,6 @@ export class DetailsComponent implements OnInit {
       this.medalsPerYear.push({ x: participation.year, y: participation.medalsCount });
     });
 
-    //update the chart
-    this.updateChartOptions();
   }
 
   //update chart data
@@ -110,6 +107,11 @@ export class DetailsComponent implements OnInit {
 
   back() {
     this.router.navigate(['']);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 
 }
