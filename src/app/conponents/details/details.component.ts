@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Legend } from 'chart.js';
 import { Subject, takeUntil } from 'rxjs';
 import { OlympicCountry } from 'src/app/core/models/Olympic';
 import { Participation } from 'src/app/core/models/Participation';
@@ -21,7 +22,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    //Get the id
+    //Get the id from parameters
     const countryId = this.route.snapshot.params['countryId'];
     this.getCountryInfos(countryId);
   }
@@ -39,7 +40,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     
   }
 
-
+  //Display piechar options
   chartOptions = {
     animationEnabled: true,
     theme: "light2",
@@ -55,7 +56,15 @@ export class DetailsComponent implements OnInit, OnDestroy {
       title: "Medals",
     },
     toolTip: {
-      shared: true
+      shared: true,
+      contentFormatter: function (e: any) {
+        let content = '';
+        e.entries.forEach(function (entry: any) {
+          // text when clickhover
+          content += `Year: ${entry.dataPoint.x.getFullYear()}, Medals: ${entry.dataPoint.y}<br>`;
+        });
+        return content;
+      }
     },
     legend: {
       cursor: "pointer",
@@ -98,6 +107,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this.fillLabels();
   }
 
+  //Put values in labels
   fillLabels() {
     this.country.participations.forEach(participation => {
       this.totalAthletes += participation.athleteCount;
@@ -105,10 +115,12 @@ export class DetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+  //Go back to main page
   back() {
     this.router.navigate(['']);
   }
 
+  //To destroy obeservables
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();

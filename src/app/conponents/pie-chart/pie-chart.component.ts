@@ -14,9 +14,11 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
 })
 export class PieChartComponent implements OnInit, OnDestroy {
 
+  //Lists of countries
   olympicCountries$!: Observable<OlympicCountry[]>;
   totalParticipation: number = 0;
   canDisplay: boolean = false;
+  //For labels
   nbOfJOs: number = 0;
   nbOfCountries: number = 0;
   private destroy$ = new Subject<boolean>();
@@ -35,7 +37,7 @@ export class PieChartComponent implements OnInit, OnDestroy {
 
   }
 
-  
+  //Display piechar options
   chartOptions = {
     animationEnabled: true,
     title: {
@@ -54,6 +56,7 @@ export class PieChartComponent implements OnInit, OnDestroy {
     }],
   }
 
+  //Modifie pie char values and labels
   updateChart() {
     this.olympicCountries$.subscribe(countries => {
       const dataPoints = countries.map(country => ({
@@ -66,15 +69,19 @@ export class PieChartComponent implements OnInit, OnDestroy {
     this.fillLabels();
   }
 
+  //Click on a country
   chartClicked(countryName: string) {
     this.olympicCountries$.pipe(takeUntil(this.destroy$)).subscribe(countries => {
+      //get coutnry info
       const country = countries.find(c => c.country === countryName);
       if (country) {
+        //go to coutnry details
         this.router.navigate(['country/', country.id]);
       }
     });
   }
 
+  //Put values in labels
   fillLabels() {
     let years: number[] = [];
     this.olympicCountries$.pipe(takeUntil(this.destroy$)).subscribe(countries => {
@@ -90,6 +97,7 @@ export class PieChartComponent implements OnInit, OnDestroy {
     });
   }
 
+  //To destroy obeservables
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
