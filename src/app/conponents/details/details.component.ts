@@ -32,6 +32,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
     this.olympicService.loadInitialData().pipe(takeUntil(this.destroy$)).subscribe(countries => {
       this.country = countries.find(c =>c.id === parseInt(countryId,0)) as OlympicCountry;
+      if(this.country == null){
+        alert("Pays non trouvé");
+        return;
+      }
       this.prepareMedalData(this.country.participations);
       this.updateChartOptions();
       this.fillLabels();

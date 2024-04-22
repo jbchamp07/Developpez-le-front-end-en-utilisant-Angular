@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { OlympicCountry } from '../models/Olympic';
-import * as fs from 'fs';
+
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +11,7 @@ import * as fs from 'fs';
 export class OlympicService {
 
   private olympicUrl = './assets/mock/olympic.json';
+  //private olympicUrl = '';
   private olympics$ = new BehaviorSubject<OlympicCountry[]>([]);
   constructor(private http: HttpClient) {}
 
@@ -21,22 +22,11 @@ export class OlympicService {
             console.error('Error loading initial data:', error);
             // Inform the user
             alert("Une erreur est survenue lors du chargement des données.");
-            this.addErrorToLogFile(error);
             return of([]);
         })
     );
   }
-  addErrorToLogFile(error: Error) {
-    const logFilePath: string = "./assets/LogFile.txt";
-    const errorMessage: string = `${new Date().toISOString()} : ${error.message}\n`;
-    fs.appendFile(logFilePath,errorMessage,(err: any) =>{
-      if (err) {
-        console.error("Une erreur s'est produite lors de l'écriture dans le log file :", err);
-        return;
-    }
-    console.log("L'erreur a été ajoutée au log file");
-    });
-  }
+
 
   getOlympics() {
     return this.olympics$.asObservable();
