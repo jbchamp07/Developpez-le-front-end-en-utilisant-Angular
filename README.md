@@ -20,6 +20,3 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 - `models` folder: contains Interfaces.
 - `services` folder: contains `olympic.service.ts` (find the data)
 - `app-routing.module.ts` : contains the routing
-
-Data included inside the `olympic.json`.
-
